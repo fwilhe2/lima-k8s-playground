@@ -20,9 +20,16 @@ provision:
     wget --output-document /opt/kubelet https://dl.k8s.io/v1.29.2/bin/linux/amd64/kubelet
     chmod +x /opt/kubelet
 
+
+# https://lima-vm.io/docs/config/network/#lima-user-v2-network
+# Enable vm->vm networking (hostname lima-nodeN.internal)
 networks:
    - lima: user-v2
 
+# Deal with 16 gig host memory -> control plane (4 gig) + 2 nodes (2 gig each) is safe..
+memory: 2GiB
+
+# Disable lima-builtin containerd provisioning to take control ourselves
 containerd:
   system: false
   user: false
