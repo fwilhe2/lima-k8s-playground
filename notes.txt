@@ -1,0 +1,5 @@
+On node:
+
+curl --insecure https://localhost:10250/pods/
+
+API: https://www.deepnetwork.com/blog/2020/01/13/kubelet-api.html
