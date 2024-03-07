@@ -15,10 +15,12 @@ provision:
     #!/bin/bash
     set -eux -o pipefail
     export DEBIAN_FRONTEND=noninteractive
+    ARCH=$(dpkg --print-architecture)
     apt-get update
     apt-get -y install etcd-server
-    wget --output-document /opt/kube-apiserver https://dl.k8s.io/v1.29.2/bin/linux/amd64/kube-apiserver
+    wget --output-document /opt/kube-apiserver https://dl.k8s.io/v1.29.2/bin/linux/$ARCH/kube-apiserver
     chmod +x /opt/kube-apiserver
+    /opt/kube-apiserver --version
 
 # https://lima-vm.io/docs/config/network/#lima-user-v2-network
 # Enable vm->vm networking (hostname lima-control-plane.internal)

@@ -15,10 +15,12 @@ provision:
     #!/bin/bash
     set -eux -o pipefail
     export DEBIAN_FRONTEND=noninteractive
+    ARCH=$(dpkg --print-architecture)
     apt-get update
     apt-get -y install containerd
-    wget --output-document /opt/kubelet https://dl.k8s.io/v1.29.2/bin/linux/amd64/kubelet
+    wget --output-document /opt/kubelet https://dl.k8s.io/v1.29.2/bin/linux/$ARCH/kubelet
     chmod +x /opt/kubelet
+    /opt/kubelet --version
 
 
 # https://lima-vm.io/docs/config/network/#lima-user-v2-network
