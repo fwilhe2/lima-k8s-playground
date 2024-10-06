@@ -3,3 +3,12 @@ On node:
 curl --insecure https://localhost:10250/pods/
 
 API: https://www.deepnetwork.com/blog/2020/01/13/kubelet-api.html
+
+
+https://github.com/lima-vm/lima/blob/master/examples/k8s.yaml
+
+https://github.com/lima-vm/lima/issues/1184
+
+https://github.com/lima-vm/lima/discussions/1181
+
+https://github.com/lima-vm/lima/pull/1183

@@ -28,7 +28,6 @@ provision:
 networks:
    - lima: user-v2
 
-# Deal with 16 gig host memory -> control plane (4 gig) + 2 nodes (2 gig each) is safe..
 memory: 2GiB
 
 # Disable lima-builtin containerd provisioning to take control ourselves
