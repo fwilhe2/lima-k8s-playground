@@ -52,7 +52,6 @@ provision:
     modprobe br_netfilter
     sysctl -w net.ipv4.ip_forward=1
 
-    echo kubeadm token create --print-join-command
 
 
 # https://lima-vm.io/docs/config/network/#lima-user-v2-network
