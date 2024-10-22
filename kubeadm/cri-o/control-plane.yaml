@@ -67,8 +67,18 @@ copyToHost:
 - guest: "/root/join-command.txt"
   host: "{{.Dir}}/copied-from-guest/join-command.txt"
   deleteOnStop: true
+# fixme: Does not work for some reason
+# - guest: "/etc/kubernetes/admin.conf"
+#   host: "{{.Dir}}/copied-from-guest/kubeconfig.yaml"
+#   deleteOnStop: true
 message: |
   Run the command from {{.Dir}}/copied-from-guest/join-command.txt on your worker nodes to add them to the cluster
+
+#   To run `kubectl` on the host (assumes kubectl is installed), run the following commands:
+#   ------
+#   export KUBECONFIG="{{.Dir}}/copied-from-guest/kubeconfig.yaml"
+#   kubectl ...
+#   ------
 
 # https://lima-vm.io/docs/config/network/#lima-user-v2-network
 networks:
