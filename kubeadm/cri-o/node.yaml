@@ -1,0 +1,67 @@
+# SPDX-FileCopyrightText: Florian Wilhelm
+# SPDX-License-Identifier: Apache-2.0
+
+# Based on the examples by Akihiro Suda and the lima contributors, see https://github.com/lima-vm/lima, distributed under Apache-2.0 license
+
+images:
+# Try to use release-yyyyMMdd image if available. Note that release-yyyyMMdd will be removed after several months.
+- location: "https://cloud.debian.org/images/cloud/bookworm/20240717-1811/debian-12-genericcloud-amd64-20240717-1811.qcow2"
+  arch: "x86_64"
+  digest: "sha512:0f0075d53749dba4c9825e606899360626bb20ac6bab3dbdeff40041b051d203eb1a56e68d377c9fac0187faa0aea77fd543ef4a883fff2304eac252cce01b44"
+- location: "https://cloud.debian.org/images/cloud/bookworm/20240717-1811/debian-12-genericcloud-arm64-20240717-1811.qcow2"
+  arch: "aarch64"
+  digest: "sha512:a68fe32c459d6d33cd8f6798fe7e2278d32add2b9506f4a6c434328a0a9cd176e532a93d0184173720023db5edfd93061082fadcb91bb3e95988564c63f139a6"
+# Fallback to the latest release image.
+# Hint: run `limactl prune` to invalidate the cache
+- location: "https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-genericcloud-amd64.qcow2"
+  arch: "x86_64"
+- location: "https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-genericcloud-arm64.qcow2"
+  arch: "aarch64"
+
+provision:
+- mode: system
+  script: |
+    #!/bin/bash
+    set -eux -o pipefail
+    export DEBIAN_FRONTEND=noninteractive
+
+    KUBERNETES_VERSION=v1.30
+    CRIO_VERSION=v1.30
+
+    apt-get update
+    apt-get install -y software-properties-common curl
+
+    curl -fsSL https://pkgs.k8s.io/core:/stable:/$KUBERNETES_VERSION/deb/Release.key |
+        gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+    echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/$KUBERNETES_VERSION/deb/ /" |
+        tee /etc/apt/sources.list.d/kubernetes.list
+
+    curl -fsSL https://pkgs.k8s.io/addons:/cri-o:/stable:/$CRIO_VERSION/deb/Release.key |
+        gpg --dearmor -o /etc/apt/keyrings/cri-o-apt-keyring.gpg
+
+    echo "deb [signed-by=/etc/apt/keyrings/cri-o-apt-keyring.gpg] https://pkgs.k8s.io/addons:/cri-o:/stable:/$CRIO_VERSION/deb/ /" |
+        tee /etc/apt/sources.list.d/cri-o.list
+
+    apt-get update
+    apt-get install -y cri-o kubelet kubeadm kubectl
+
+    systemctl start crio.service
+
+    swapoff -a
+    modprobe br_netfilter
+    sysctl -w net.ipv4.ip_forward=1
+
+    echo kubeadm token create --print-join-command
+
+
+# https://lima-vm.io/docs/config/network/#lima-user-v2-network
+networks:
+   - lima: user-v2
+
+memory: 2GiB
+
+# Disable lima-builtin containerd provisioning to take control ourselves
+containerd:
+  system: false
+  user: false
