@@ -29,7 +29,7 @@ provision:
     CRIO_VERSION=v1.30
 
     apt-get update
-    apt-get install -y software-properties-common curl
+    apt-get install -y software-properties-common curl etcd-client
 
     curl -fsSL https://pkgs.k8s.io/core:/stable:/$KUBERNETES_VERSION/deb/Release.key |
         gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
@@ -45,6 +45,7 @@ provision:
 
     apt-get update
     apt-get install -y cri-o kubelet kubeadm kubectl
+    apt-mark hold cri-o kubelet kubeadm kubectl
 
     systemctl start crio.service
 

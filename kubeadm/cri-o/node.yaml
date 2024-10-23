@@ -45,6 +45,7 @@ provision:
 
     apt-get update
     apt-get install -y cri-o kubelet kubeadm kubectl
+    apt-mark hold cri-o kubelet kubeadm kubectl
 
     systemctl start crio.service
 
